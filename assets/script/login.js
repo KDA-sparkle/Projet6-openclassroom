@@ -30,3 +30,10 @@ function alredyLogged() {
     return;
   }
 }
+submit.addEventListener("click", () => {
+  let user = {
+    email: email.value, // * Récupération de l'email
+    password: password.value, // * Récupération du mot de passe
+  };
+  login(user); // * Tentative de connexion
+});
