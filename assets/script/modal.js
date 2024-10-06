@@ -24,3 +24,8 @@ let id; // * Stocke l'ID du filtre de projet utilisé
 
 // * Appel initial pour afficher tous les projets
 generationProjets(data, null); // * Appelle generationProjets avec null pour afficher tous les projets
+
+// * Fonction pour réinitialiser (vider) la section des projets pour éviter les doublons
+function resetSectionProjets() {
+  sectionProjets.innerHTML = ""; // * Supprime tout le contenu de la section pour repartir à zéro
+}
