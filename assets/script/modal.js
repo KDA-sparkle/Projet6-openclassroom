@@ -29,3 +29,22 @@ generationProjets(data, null); // * Appelle generationProjets avec null pour aff
 function resetSectionProjets() {
   sectionProjets.innerHTML = ""; // * Supprime tout le contenu de la section pour repartir à zéro
 }
+
+// * Fonction asynchrone pour générer les projets
+// * `data` : ensemble des projets récupérés, `id` : ID du filtre de catégorie (null pour tous les projets)
+async function generationProjets(data, id) {
+  try {
+    // * Récupère tous les projets via une requête GET à l'API
+    const response = await fetch("http://localhost:5678/api/works");
+    data = await response.json(); // * Transforme la réponse en JSON (tableau d'objets projets)
+  } catch {
+    // ! Gestion des erreurs en cas d'échec de récupération des projets
+    const p = document.createElement("p");
+    p.classList.add("error"); // ! Ajoute une classe CSS "error" pour styliser l'erreur
+    p.innerHTML =
+      "Une erreur est survenue lors de la récupération des projets<br><br>Une tentative de reconnexion automatique aura lieu dans une minute.<br><br>Si le problème persiste, veuillez contacter l'administrateur du site.";
+    sectionProjets.appendChild(p); // ! Ajoute le message d'erreur dans la section des projets
+    await new Promise((resolve) => setTimeout(resolve, 60000)); // ! Attends 60 secondes avant de tenter une reconnexion
+    window.location.href = "index.html"; // ! Redirige vers la page d'accueil après 60 secondes
+  }
+}
