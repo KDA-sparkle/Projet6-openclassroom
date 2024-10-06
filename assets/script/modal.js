@@ -209,3 +209,80 @@ function adminPanel() {
     }
   });
 }
+
+////////////////////////////////////////////////////////////
+// INDEX : 3-// GESTION SUPPRESSION D'UN PROJET /////////////
+////////////////////////////////////////////////////////////
+
+// * Fonction qui ajoute des événements de suppression aux boutons
+function deleteWork() {
+  let btnDelete = document.querySelectorAll(".js-delete-work");
+  for (let i = 0; i < btnDelete.length; i++) {
+    btnDelete[i].addEventListener("click", deleteProjets); // * Ajoute un événement de clic à chaque bouton de suppression
+  }
+}
+
+// * Fonction pour supprimer un projet
+async function deleteProjets() {
+  const confirmation = window.confirm(
+    "Êtes-vous sûr de vouloir supprimer cette image ?"
+  );
+  if (!confirmation) {
+    return;
+  }
+
+  // * Envoie une requête DELETE pour supprimer le projet
+  await fetch(`http://localhost:5678/api/works/${this.classList[0]}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((response) => {
+      if (response.status === 204) {
+        refreshPage(this.classList[0]); // * Rafraîchit la liste des projets après suppression
+      } else if (response.status === 401) {
+        alert("Vous n'êtes pas autorisé à supprimer ce projet.");
+        window.location.href = "login.html"; // * Redirige vers la page de connexion
+      }
+    })
+    .catch((error) => {
+      console.log(error); // ! Affiche l'erreur dans la console si la requête échoue
+    });
+}
+////////////////////////////////////////////////////////////
+// INDEX : 3-// GESTION SUPPRESSION D'UN PROJET /////////////
+////////////////////////////////////////////////////////////
+
+// * Fonction qui ajoute des événements de suppression aux boutons
+function deleteWork() {
+  let btnDelete = document.querySelectorAll(".js-delete-work");
+  for (let i = 0; i < btnDelete.length; i++) {
+    btnDelete[i].addEventListener("click", deleteProjets); // * Ajoute un événement de clic à chaque bouton de suppression
+  }
+}
+
+// * Fonction pour supprimer un projet
+async function deleteProjets() {
+  const confirmation = window.confirm(
+    "Êtes-vous sûr de vouloir supprimer cette image ?"
+  );
+  if (!confirmation) {
+    return;
+  }
+
+  // * Envoie une requête DELETE pour supprimer le projet
+  await fetch(`http://localhost:5678/api/works/${this.classList[0]}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((response) => {
+      if (response.status === 204) {
+        refreshPage(this.classList[0]); // * Rafraîchit la liste des projets après suppression
+      } else if (response.status === 401) {
+        alert("Vous n'êtes pas autorisé à supprimer ce projet.");
+        window.location.href = "login.html"; // * Redirige vers la page de connexion
+      }
+    })
+    .catch((error) => {
+      console.log(error); // ! Affiche l'erreur dans la console si la requête échoue
+    });
+}
