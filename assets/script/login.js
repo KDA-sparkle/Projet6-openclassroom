@@ -14,3 +14,5 @@ const loginMdpError = document.querySelector(".loginMdp__error"); // * Erreur : 
 // * Sélection des champs email et mot de passe
 const email = document.getElementById("email"); // * Champ email
 const password = document.getElementById("password"); // * Champ mot de passe
+// * Sélection du bouton de soumission
+const submit = document.getElementById("submit"); // * Bouton de soumission
