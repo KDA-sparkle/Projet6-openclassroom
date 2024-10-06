@@ -104,3 +104,35 @@ btnId3.addEventListener("click", () => {
 function resetmodaleSectionProjets() {
   modaleSectionProjets.innerHTML = ""; // * Vide la section des projets affichés dans la modale admin
 }
+
+// * Ouverture de la modale
+let modale = null; // * Variable pour stocker la modale ouverte
+let dataAdmin; // * Stocke les projets récupérés pour l'administration
+const modaleSectionProjets = document.querySelector(".js-admin-projets"); // * Sélectionne la section où les projets seront affichés dans la modale admin
+
+// * Fonction d'ouverture de la modale admin
+const openModale = function (e) {
+  e.preventDefault(); // * Empêche l'action par défaut du lien
+  modale = document.querySelector(e.target.getAttribute("href")); // * Sélectionne la modale à ouvrir
+
+  modaleProjets(); // * Génère et affiche les projets dans la modale admin
+
+  setTimeout(() => {
+    modale.style.display = null; // * Affiche la modale
+    modale.removeAttribute("aria-hidden"); // * Supprime l'attribut "aria-hidden"
+    modale.setAttribute("aria-modal", "true"); // * Indique que la modale est active
+  }, 25); // * Délai avant d'afficher la modale
+
+  document.querySelectorAll(".js-modale-projet").forEach((a) => {
+    a.addEventListener("click", openModaleProjet); // * Ajoute l'événement d'ouverture de modale pour chaque projet
+  });
+
+  // * Événements de fermeture de la modale
+  modale.addEventListener("click", closeModale); // * Ferme la modale si clic en dehors
+  modale
+    .querySelector(".js-modale-close")
+    .addEventListener("click", closeModale); // * Ferme via bouton
+  modale
+    .querySelector(".js-modale-stop")
+    .addEventListener("click", stopPropagation); // * Empêche fermeture au clic intérieur
+};
