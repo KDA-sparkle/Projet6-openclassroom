@@ -48,3 +48,21 @@ async function generationProjets(data, id) {
     window.location.href = "index.html"; // ! Redirige vers la page d'accueil après 60 secondes
   }
 }
+
+// * Génération et affichage des projets
+for (let i = 0; i < data.length; i++) {
+  const figure = document.createElement("figure"); // * Crée un élément <figure> pour chaque projet
+  sectionProjets.appendChild(figure); // * Ajoute la figure à la section des projets
+  figure.classList.add(`js-projet-${data[i].id}`); // * Ajoute un identifiant spécifique au projet
+
+  // * Création de l'image du projet
+  const img = document.createElement("img");
+  img.src = data[i].imageUrl; // * URL de l'image depuis les données du projet
+  img.alt = data[i].title; // * Description (texte alternatif) pour l'accessibilité
+  figure.appendChild(img); // * Ajoute l'image à la figure
+
+  // * Création de la légende du projet (titre)
+  const figcaption = document.createElement("figcaption");
+  figcaption.innerHTML = data[i].title; // * Le titre du projet récupéré depuis les données
+  figure.appendChild(figcaption); // * Ajoute la légende à la figure
+}
