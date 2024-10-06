@@ -186,3 +186,26 @@ const closeModale = function (e) {
     resetmodaleSectionProjets(); // * Réinitialise la section projets de la modale
   }, 300);
 };
+
+////////////////////////////////////////////////////
+// INDEX : 2-//// GESTION TOKEN LOGIN //////////////
+////////////////////////////////////////////////////
+
+// * Récupère le token de l'utilisateur (s'il est connecté)
+const token = localStorage.getItem("token"); // * Récupère le token depuis le localStorage
+const AlredyLogged = document.querySelector(".js-alredy-logged"); // * Sélectionne l'élément qui affiche le statut de connexion
+
+adminPanel(); // * Gère les boutons admin en fonction du token
+
+// * Fonction pour afficher les boutons d'administration si l'utilisateur est connecté
+function adminPanel() {
+  document.querySelectorAll(".admin__modifer").forEach((a) => {
+    if (token === null) {
+      return; // * Si aucun token, l'utilisateur n'est pas connecté
+    } else {
+      a.removeAttribute("aria-hidden"); // * Affiche les boutons pour les utilisateurs connectés
+      a.removeAttribute("style"); // * Supprime les styles CSS qui cachent les boutons
+      AlredyLogged.innerHTML = "deconnexion"; // * Change le texte du bouton
+    }
+  });
+}
