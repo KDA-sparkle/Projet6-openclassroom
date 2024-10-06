@@ -40,3 +40,10 @@ submit.addEventListener("click", () => {
 // * Réinitialisation des messages d'erreur
 loginEmailError.innerHTML = "";
 loginMdpError.innerHTML = "";
+// * Vérification de l'email avec une regex
+if (!id.email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]{2,}\\.[a-z]{2,4}$/g)) {
+  const p = document.createElement("p"); // ! Erreur : email invalide
+  p.innerHTML = "Veuillez entrer une adresse mail valide";
+  loginEmailError.appendChild(p);
+  return;
+}
