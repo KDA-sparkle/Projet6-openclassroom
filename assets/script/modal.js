@@ -136,3 +136,34 @@ const openModale = function (e) {
     .querySelector(".js-modale-stop")
     .addEventListener("click", stopPropagation); // * Empêche fermeture au clic intérieur
 };
+
+// * Fonction pour générer et afficher les projets dans la modale admin
+async function modaleProjets() {
+  const response = await fetch("http://localhost:5678/api/works"); // * Récupère les projets via l'API
+  dataAdmin = await response.json(); // * Transforme la réponse en JSON
+  resetmodaleSectionProjets(); // * Réinitialise la section projets
+
+  for (let i = 0; i < dataAdmin.length; i++) {
+    const div = document.createElement("div"); // * Crée un élément <div> pour chaque projet
+    div.classList.add("gallery__item-modale");
+    modaleSectionProjets.appendChild(div); // * Ajoute ce projet à la section
+
+    const img = document.createElement("img"); // * Crée un élément <img>
+    img.src = dataAdmin[i].imageUrl; // * URL de l'image
+    img.alt = dataAdmin[i].title; // * Texte alternatif
+    div.appendChild(img); // * Ajoute l'image
+
+    const p = document.createElement("p"); // * Crée un élément <p> pour le titre et l'ID du projet
+    div.appendChild(p);
+    p.classList.add(dataAdmin[i].id, "js-delete-work"); // * Identifiant pour la suppression
+
+    const icon = document.createElement("i"); // * Crée une icône de suppression (corbeille)
+    icon.classList.add("fa-solid", "fa-trash-can");
+    p.appendChild(icon); // * Ajoute l'icône
+
+    const a = document.createElement("a"); // * Crée un lien pour l'édition du projet
+    a.innerHTML = "Éditer";
+    div.appendChild(a); // * Ajoute le lien
+  }
+  deleteWork(); // * Ajoute des événements pour la suppression de projet
+}
