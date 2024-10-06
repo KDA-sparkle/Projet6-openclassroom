@@ -286,3 +286,63 @@ async function deleteProjets() {
       console.log(error); // ! Affiche l'erreur dans la console si la requête échoue
     });
 }
+
+////////////////////////////////////////////////////
+// INDEX : 5-/ GESTION AJOUT D'UN PROJET        ///
+////////////////////////////////////////////////////
+
+// * Sélection du bouton pour ajouter un projet
+const btnAjouterProjet = document.querySelector(".js-add-work");
+btnAjouterProjet.addEventListener("click", addWork); // * Ajoute l'événement clic
+
+// * Fonction pour ajouter un projet
+async function addWork(event) {
+  event.preventDefault(); // * Empêche l'envoi du formulaire par défaut
+
+  // * Récupération des valeurs du formulaire
+  const title = document.querySelector(".js-title").value;
+  const categoryId = document.querySelector(".js-categoryId").value;
+  const image = document.querySelector(".js-image").files[0];
+
+  // ! Vérification que tous les champs sont remplis
+  if (title === "" || categoryId === "" || image === undefined) {
+    alert("Merci de remplir tous les champs");
+    return;
+  } else if (categoryId !== "1" && categoryId !== "2" && categoryId !== "3") {
+    alert("Merci de choisir une catégorie valide");
+    return;
+  } else {
+    try {
+      // * Création d'un objet `FormData` pour envoyer les données du projet
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("category", categoryId);
+      formData.append("image", image);
+
+      // * Envoi des données via une requête POST à l'API
+      const response = await fetch("http://localhost:5678/api/works", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      // * Gestion des réponses du serveur
+      if (response.status === 201) {
+        alert("Projet ajouté avec succès :)");
+        modaleProjets(dataAdmin); // * Réaffiche les projets dans la modale admin
+        generationProjets(data, null); // * Rafraîchit la page d'accueil
+      } else if (response.status === 400) {
+        alert("Merci de remplir tous les champs");
+      } else if (response.status === 500) {
+        alert("Erreur serveur");
+      } else if (response.status === 401) {
+        alert("Vous n'êtes pas autorisé à ajouter un projet");
+        window.location.href = "login.html"; // * Redirige vers la page de connexion
+      }
+    } catch (error) {
+      console.log(error); // ! Gestion des erreurs
+    }
+  }
+}
