@@ -16,3 +16,17 @@ const email = document.getElementById("email"); // * Champ email
 const password = document.getElementById("password"); // * Champ mot de passe
 // * Sélection du bouton de soumission
 const submit = document.getElementById("submit"); // * Bouton de soumission
+alredyLogged(); // * Vérifie si l'utilisateur est déjà connecté
+
+function alredyLogged() {
+  if (localStorage.getItem("token")) {
+    // ! Token présent, utilisateur déjà connecté
+    localStorage.removeItem("token"); // ! Suppression du token, déconnexion de l'utilisateur
+
+    const p = document.createElement("p"); // * Création d'un message de déconnexion
+    p.innerHTML =
+      "<br><br><br>Vous avez été déconnecté, veuillez vous reconnecter";
+    alredyLoggedError.appendChild(p); // * Affichage du message
+    return;
+  }
+}
