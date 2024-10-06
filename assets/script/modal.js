@@ -96,3 +96,11 @@ btnId3.addEventListener("click", () => {
 //            4- GESTION SUPPRESSION PROJET
 //            5- GESTION AJOUT PROJET
 //            6- GESTION AJOUT D'UN PROJET
+/////////////////////////////////////////////////////
+// INDEX : 1-// GESTION BOITE MODALE ////////////////
+/////////////////////////////////////////////////////
+
+// * Fonction pour réinitialiser (vider) la section des projets dans la modale d'administration
+function resetmodaleSectionProjets() {
+  modaleSectionProjets.innerHTML = ""; // * Vide la section des projets affichés dans la modale admin
+}
