@@ -66,3 +66,23 @@ for (let i = 0; i < data.length; i++) {
   figcaption.innerHTML = data[i].title; // * Le titre du projet récupéré depuis les données
   figure.appendChild(figcaption); // * Ajoute la légende à la figure
 }
+
+//////////////
+// >>> FILTRES
+
+// * Ajout des événements sur les boutons de filtre pour générer les projets correspondants lors du clic
+btnAll.addEventListener("click", () => {
+  generationProjets(data, null); // * Affiche tous les projets
+});
+
+btnId1.addEventListener("click", () => {
+  generationProjets(data, 1); // * Filtre par catégorie 1 (Objets)
+});
+
+btnId2.addEventListener("click", () => {
+  generationProjets(data, 2); // * Filtre par catégorie 2 (Appartements)
+});
+
+btnId3.addEventListener("click", () => {
+  generationProjets(data, 3); // * Filtre par catégorie 3 (Hôtels & restaurants)
+});
