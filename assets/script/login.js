@@ -54,3 +54,26 @@ if (id.password.length < 5 && !id.password.match(/^[a-zA-Z0-9]+$/g)) {
   loginMdpError.appendChild(p);
   return;
 }
+fetch("http://localhost:5678/api/users/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json;charset=utf-8",
+  },
+  body: JSON.stringify(id),
+})
+  .then((response) => response.json())
+  .then((result) => {
+    console.log(result); // * Résultat de la requête
+
+    if (result.error || result.message) {
+      // ! Erreur : combinaison email/mot de passe incorrecte
+      const p = document.createElement("p");
+      p.innerHTML = "La combinaison e-mail/mot de passe est incorrecte";
+      loginMdpError.appendChild(p);
+    } else if (result.token) {
+      // * Connexion réussie, stockage du token
+      localStorage.setItem("token", result.token);
+      window.location.href = "index.html"; // * Redirection vers la page d'accueil
+    }
+  })
+  .catch((error) => console.log(error)); // ! Erreur réseau ou serveur
