@@ -47,3 +47,10 @@ if (!id.email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]{2,}\\.[a-z]{2,4}$/g)) {
   loginEmailError.appendChild(p);
   return;
 }
+// * Vérification du mot de passe (au moins 5 caractères, lettres et chiffres uniquement)
+if (id.password.length < 5 && !id.password.match(/^[a-zA-Z0-9]+$/g)) {
+  const p = document.createElement("p"); // ! Erreur : mot de passe invalide
+  p.innerHTML = "Veuillez entrer un mot de passe valide";
+  loginMdpError.appendChild(p);
+  return;
+}
