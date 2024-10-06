@@ -37,3 +37,6 @@ submit.addEventListener("click", () => {
   };
   login(user); // * Tentative de connexion
 });
+// * Réinitialisation des messages d'erreur
+loginEmailError.innerHTML = "";
+loginMdpError.innerHTML = "";
