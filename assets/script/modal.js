@@ -167,3 +167,22 @@ async function modaleProjets() {
   }
   deleteWork(); // * Ajoute des événements pour la suppression de projet
 }
+
+// * Fonction pour fermer la modale
+const closeModale = function (e) {
+  e.preventDefault(); // * Empêche l'action par défaut du lien
+  if (modale === null) return; // * Sort si déjà fermé
+
+  modale.setAttribute("aria-hidden", "true"); // * Rend la modale invisible
+  modale.removeAttribute("aria-modal"); // * Supprime aria-modal
+  modale
+    .querySelector(".js-modale-close")
+    .removeEventListener("click", closeModale); // * Supprime l'événement de fermeture
+
+  // * Ferme la modale avec une animation de 300ms
+  window.setTimeout(function () {
+    modale.style.display = "none"; // * Cache la modale
+    modale = null; // * Réinitialise la variable modale
+    resetmodaleSectionProjets(); // * Réinitialise la section projets de la modale
+  }, 300);
+};
