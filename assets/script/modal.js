@@ -86,3 +86,13 @@ btnId2.addEventListener("click", () => {
 btnId3.addEventListener("click", () => {
   generationProjets(data, 3); // * Filtre par catégorie 3 (Hôtels & restaurants)
 });
+
+/////////////////////////////////////////////////////
+// Gestion des modules administrateur ///////////////
+/////////////////////////////////////////////////////
+// * INDEX : 1- GESTION BOITE MODALE
+//            2- GESTION TOKEN LOGIN
+//            3- GÉNÉRATION DANS LA MODALE
+//            4- GESTION SUPPRESSION PROJET
+//            5- GESTION AJOUT PROJET
+//            6- GESTION AJOUT D'UN PROJET
