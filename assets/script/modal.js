@@ -240,26 +240,37 @@ window.addEventListener("keydown", function (e) {
 const token = localStorage.getItem("token"); // * Récupère le token depuis le localStorage
 const AlredyLogged = document.querySelector(".js-alredy-logged"); // * Sélectionne l'élément qui affiche le statut de connexion
 const adminRod = document.querySelector(".admin__rod"); // * Sélectionne la barre noire admin
+const adminModifierButtons = document.querySelectorAll(".admin__modifer"); // * Sélectionne tous les boutons "Modifier"
 
 adminPanel(); // * Gère les boutons admin en fonction du token
 
 // * Fonction pour afficher les boutons d'administration si l'utilisateur est connecté
 function adminPanel() {
-  if (token !== null) {
+  if (token) {
     // * L'utilisateur est connecté
     AlredyLogged.innerHTML = "logout"; // * Change le texte du bouton de login
 
     // * Affiche la barre noire
     adminRod.style.display = "flex"; // * Affiche la barre noire en mode flex
 
+    // * Affiche tous les boutons "Modifier"
+    adminModifierButtons.forEach((btn) => {
+      btn.removeAttribute("aria-hidden"); // * Rend les boutons visibles
+      btn.style.display = "flex"; // * Affiche chaque bouton "Modifier"
+    });
+
     // * Gère la déconnexion
-    document.querySelector(".js-logout").addEventListener("click", function () {
+    AlredyLogged.addEventListener("click", function () {
       localStorage.removeItem("token"); // Supprime le token pour déconnecter
       window.location.reload(); // Recharge la page pour refléter le changement
     });
   } else {
-    // Si l'utilisateur n'est pas connecté, la barre reste cachée
+    // Si l'utilisateur n'est pas connecté, la barre reste cachée et les boutons "Modifier" aussi
     adminRod.style.display = "none";
+    adminModifierButtons.forEach((btn) => {
+      btn.setAttribute("aria-hidden", "true"); // Cache les boutons
+      btn.style.display = "none"; // Cache les boutons "Modifier"
+    });
   }
 }
 
