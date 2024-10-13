@@ -268,6 +268,13 @@ html {
   color: white;
 }
 
+/* Bouton désactivé */
+.admin__rod btn-disabled:hover {
+  background-color: grey;
+  color: white;
+  cursor: not-allowed;
+}
+
 .login__form input[type="submit"]:hover {
   color: #1d6154;
   background-color: white;
@@ -366,12 +373,18 @@ html {
   background-color: #306685;
   color: white;
 }
-
 .modale-projet-form input[type="submit"]:hover {
   color: #1d6154;
   background-color: white;
   scale: 1.05;
   cursor: pointer;
+}
+
+.modale-projet-form input[type="submit"]:disabled {
+  background-color: rgb(173, 171, 171);
+  color: white;
+  cursor: not-allowed;
+  scale: 1; /* Pas de zoom */
 }
 
 /* ADMIN */
@@ -820,4 +833,60 @@ footer nav ul {
 .login a {
   text-decoration: underline;
   margin-bottom: 100px;
+}
+
+#image-preview {
+  display: none; /* Caché par défaut */
+  max-width: 100%;
+  height: auto;
+  max-height: 200px; /* Taille maximale de l'image */
+  object-fit: cover; /* Ajuste l'image pour qu'elle remplisse correctement l'espace */
+  border-radius: 5px; /* Arrondi les coins */
+}
+
+.image-added {
+  display: block; /* Affiche l'image une fois qu'elle est ajoutée */
+  max-width: 100%;
+  height: auto;
+  max-height: 200px; /* Limite la hauteur */
+  object-fit: cover; /* Ajuste l'image correctement */
+}
+
+/* Barre noire pour le mode édition */
+.admin__rod {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background-color: black;
+  display: flex;
+  justify-content: center; /* Centre les éléments horizontalement */
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1000;
+}
+
+.admin__modifer {
+  display: flex;
+  align-items: center;
+  color: white;
+  justify-content: center; /* Centre le texte dans la barre */
+}
+
+.admin__modifer i {
+  margin-right: 10px;
+}
+
+.admin__rod button {
+  background-color: white;
+  color: black;
+  padding: 5px 15px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  right: 20px; /* Place le bouton à droite */
 }
