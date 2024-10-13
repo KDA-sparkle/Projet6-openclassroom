@@ -47,24 +47,50 @@ async function generationProjets(data, id) {
     await new Promise((resolve) => setTimeout(resolve, 60000)); // ! Attends 60 secondes avant de tenter une reconnexion
     window.location.href = "index.html"; // ! Redirige vers la page d'accueil après 60 secondes
   }
-}
 
-// * Génération et affichage des projets
-for (let i = 0; i < data.length; i++) {
-  const figure = document.createElement("figure"); // * Crée un élément <figure> pour chaque projet
-  sectionProjets.appendChild(figure); // * Ajoute la figure à la section des projets
-  figure.classList.add(`js-projet-${data[i].id}`); // * Ajoute un identifiant spécifique au projet
+  // * Réinitialisation de la section projets avant d'afficher de nouveaux projets
+  resetSectionProjets();
 
-  // * Création de l'image du projet
-  const img = document.createElement("img");
-  img.src = data[i].imageUrl; // * URL de l'image depuis les données du projet
-  img.alt = data[i].title; // * Description (texte alternatif) pour l'accessibilité
-  figure.appendChild(img); // * Ajoute l'image à la figure
+  // * Filtrage des projets par catégorie si un filtre est sélectionné
+  if ([1, 2, 3].includes(id)) {
+    data = data.filter((data) => data.categoryId == id); // * Filtre les projets par categoryId si l'ID est 1, 2 ou 3
+  }
 
-  // * Création de la légende du projet (titre)
-  const figcaption = document.createElement("figcaption");
-  figcaption.innerHTML = data[i].title; // * Le titre du projet récupéré depuis les données
-  figure.appendChild(figcaption); // * Ajoute la légende à la figure
+  // * Mise à jour de la couleur des boutons en fonction du filtre sélectionné
+  document.querySelectorAll(".filter__btn").forEach((btn) => {
+    btn.classList.remove("filter__btn--active"); // * Supprime la classe active de tous les boutons
+  });
+  document
+    .querySelector(`.filter__btn-id-${id}`)
+    .classList.add("filter__btn--active"); // * Ajoute la classe active au bouton sélectionné
+
+  // ! Si aucun projet n'est trouvé ou si data est indéfini
+  if (data.length === 0 || data === undefined) {
+    const p = document.createElement("p"); // ! Crée un nouvel élément <p> pour afficher un message d'erreur
+    p.classList.add("error");
+    p.innerHTML =
+      "Aucun projet à afficher <br><br>Toutes nos excuses pour la gêne occasionnée."; // ! Message d'erreur pour l'utilisateur
+    sectionProjets.appendChild(p); // ! Ajoute ce message à la section des projets
+    return; // ! Sort de la fonction
+  }
+
+  // * Génération et affichage des projets
+  for (let i = 0; i < data.length; i++) {
+    const figure = document.createElement("figure"); // * Crée un élément <figure> pour chaque projet
+    sectionProjets.appendChild(figure); // * Ajoute la figure à la section des projets
+    figure.classList.add(`js-projet-${data[i].id}`); // * Ajoute un identifiant spécifique au projet
+
+    // * Création de l'image du projet
+    const img = document.createElement("img");
+    img.src = data[i].imageUrl; // * URL de l'image depuis les données du projet
+    img.alt = data[i].title; // * Description (texte alternatif) pour l'accessibilité
+    figure.appendChild(img); // * Ajoute l'image à la figure
+
+    // * Création de la légende du projet (titre)
+    const figcaption = document.createElement("figcaption");
+    figcaption.innerHTML = data[i].title; // * Le titre du projet récupéré depuis les données
+    figure.appendChild(figcaption); // * Ajoute la légende à la figure
+  }
 }
 
 //////////////
@@ -96,6 +122,7 @@ btnId3.addEventListener("click", () => {
 //            4- GESTION SUPPRESSION PROJET
 //            5- GESTION AJOUT PROJET
 //            6- GESTION AJOUT D'UN PROJET
+
 /////////////////////////////////////////////////////
 // INDEX : 1-// GESTION BOITE MODALE ////////////////
 /////////////////////////////////////////////////////
@@ -187,6 +214,24 @@ const closeModale = function (e) {
   }, 300);
 };
 
+// * Empêche la propagation de l'événement de clic pour éviter la fermeture accidentelle de la modale
+const stopPropagation = function (e) {
+  e.stopPropagation(); // * Empêche la propagation de l'événement
+};
+
+// * Ajoute les événements pour ouvrir la modale
+document.querySelectorAll(".js-modale").forEach((a) => {
+  a.addEventListener("click", openModale); // * Ajoute l'événement d'ouverture
+});
+
+// * Ferme la modale si l'utilisateur appuie sur la touche Échap
+window.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" || e.key === "Esc") {
+    closeModale(e); // * Ferme la modale si Échap est pressé
+    closeModaleProjet(e); // * Ferme la modale projet aussi
+  }
+});
+
 ////////////////////////////////////////////////////
 // INDEX : 2-//// GESTION TOKEN LOGIN //////////////
 ////////////////////////////////////////////////////
@@ -194,20 +239,28 @@ const closeModale = function (e) {
 // * Récupère le token de l'utilisateur (s'il est connecté)
 const token = localStorage.getItem("token"); // * Récupère le token depuis le localStorage
 const AlredyLogged = document.querySelector(".js-alredy-logged"); // * Sélectionne l'élément qui affiche le statut de connexion
+const adminRod = document.querySelector(".admin__rod"); // * Sélectionne la barre noire admin
 
 adminPanel(); // * Gère les boutons admin en fonction du token
 
 // * Fonction pour afficher les boutons d'administration si l'utilisateur est connecté
 function adminPanel() {
-  document.querySelectorAll(".admin__modifer").forEach((a) => {
-    if (token === null) {
-      return; // * Si aucun token, l'utilisateur n'est pas connecté
-    } else {
-      a.removeAttribute("aria-hidden"); // * Affiche les boutons pour les utilisateurs connectés
-      a.removeAttribute("style"); // * Supprime les styles CSS qui cachent les boutons
-      AlredyLogged.innerHTML = "deconnexion"; // * Change le texte du bouton
-    }
-  });
+  if (token !== null) {
+    // * L'utilisateur est connecté
+    AlredyLogged.innerHTML = "logout"; // * Change le texte du bouton de login
+
+    // * Affiche la barre noire
+    adminRod.style.display = "flex"; // * Affiche la barre noire en mode flex
+
+    // * Gère la déconnexion
+    document.querySelector(".js-logout").addEventListener("click", function () {
+      localStorage.removeItem("token"); // Supprime le token pour déconnecter
+      window.location.reload(); // Recharge la page pour refléter le changement
+    });
+  } else {
+    // Si l'utilisateur n'est pas connecté, la barre reste cachée
+    adminRod.style.display = "none";
+  }
 }
 
 ////////////////////////////////////////////////////////////
@@ -248,101 +301,170 @@ async function deleteProjets() {
       console.log(error); // ! Affiche l'erreur dans la console si la requête échoue
     });
 }
-////////////////////////////////////////////////////////////
-// INDEX : 3-// GESTION SUPPRESSION D'UN PROJET /////////////
-////////////////////////////////////////////////////////////
 
-// * Fonction qui ajoute des événements de suppression aux boutons
-function deleteWork() {
-  let btnDelete = document.querySelectorAll(".js-delete-work");
-  for (let i = 0; i < btnDelete.length; i++) {
-    btnDelete[i].addEventListener("click", deleteProjets); // * Ajoute un événement de clic à chaque bouton de suppression
-  }
+// * Fonction pour rafraîchir la page après suppression sans recharger entièrement
+async function refreshPage(i) {
+  modaleProjets(); // * Relance la génération des projets dans la modale admin
+
+  const projet = document.querySelector(`.js-projet-${i}`); // * Sélectionne l'élément projet
+  projet.style.display = "none"; // * Cache cet élément projet
 }
 
-// * Fonction pour supprimer un projet
-async function deleteProjets() {
-  const confirmation = window.confirm(
-    "Êtes-vous sûr de vouloir supprimer cette image ?"
-  );
-  if (!confirmation) {
-    return;
-  }
+////////////////////////////////////////////////////
+// INDEX : 4-/ GESTION BOITE MODALE AJOUT PROJET ///
+////////////////////////////////////////////////////
 
-  // * Envoie une requête DELETE pour supprimer le projet
-  await fetch(`http://localhost:5678/api/works/${this.classList[0]}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((response) => {
-      if (response.status === 204) {
-        refreshPage(this.classList[0]); // * Rafraîchit la liste des projets après suppression
-      } else if (response.status === 401) {
-        alert("Vous n'êtes pas autorisé à supprimer ce projet.");
-        window.location.href = "login.html"; // * Redirige vers la page de connexion
-      }
-    })
-    .catch((error) => {
-      console.log(error); // ! Affiche l'erreur dans la console si la requête échoue
-    });
-}
+// * Ouverture de la modale pour ajouter un projet
+let modaleProjet = null;
+const openModaleProjet = function (e) {
+  e.preventDefault(); // * Empêche l'action par défaut
+  modaleProjet = document.querySelector(e.target.getAttribute("href")); // * Sélectionne la modale projet
+
+  modaleProjet.style.display = null; // * Affiche la modale projet
+  modaleProjet.removeAttribute("aria-hidden"); // * Supprime aria-hidden
+  modaleProjet.setAttribute("aria-modal", "true"); // * Ajoute aria-modal
+
+  modaleProjet
+    .querySelector(".js-modale-close")
+    .addEventListener("click", closeModaleProjet); // * Ferme la modale via bouton
+  modaleProjet
+    .querySelector(".js-modale-stop")
+    .addEventListener("click", stopPropagation); // * Empêche fermeture sur clic intérieur
+};
+
+// * Fermeture de la modale projet
+const closeModaleProjet = function (e) {
+  if (modaleProjet === null) return;
+
+  modaleProjet.setAttribute("aria-hidden", "true");
+  modaleProjet.removeAttribute("aria-modal");
+
+  modaleProjet
+    .querySelector(".js-modale-close")
+    .removeEventListener("click", closeModaleProjet);
+  modaleProjet.style.display = "none"; // * Cache la modale projet
+  modaleProjet = null;
+};
 
 ////////////////////////////////////////////////////
 // INDEX : 5-/ GESTION AJOUT D'UN PROJET        ///
 ////////////////////////////////////////////////////
 
-// * Sélection du bouton pour ajouter un projet
+// Sélection des éléments du formulaire
+// Sélection des éléments du formulaire
 const btnAjouterProjet = document.querySelector(".js-add-work");
-btnAjouterProjet.addEventListener("click", addWork); // * Ajoute l'événement clic
+const titleInput = document.querySelector(".js-title");
+const imageInput = document.querySelector(".js-image");
+const photoIcon = document.querySelector(".form-group-photo i");
+const imagePreview = document.querySelector("#image-preview");
+const imagePreviewContainer = document.querySelector(
+  ".image-preview-container"
+);
+
+// Fonction pour vérifier si les champs sont remplis et activer le bouton
+function checkFormValidity() {
+  if (titleInput.value !== "" && imageInput.files.length > 0) {
+    btnAjouterProjet.classList.remove("btn-disabled"); // Supprime la classe "btn-disabled"
+    btnAjouterProjet.disabled = false; // Active le bouton
+  } else {
+    btnAjouterProjet.classList.add("btn-disabled"); // Ajoute la classe "btn-disabled"
+    btnAjouterProjet.disabled = true; // Désactive le bouton
+  }
+}
+
+// Fonction pour afficher l'aperçu de l'image
+function previewImage() {
+  const file = imageInput.files[0]; // Récupérer le fichier sélectionné
+  if (file) {
+    const reader = new FileReader();
+
+    // Quand le fichier est chargé, afficher l'aperçu
+    reader.addEventListener("load", function () {
+      imagePreview.src = reader.result; // Mettre à jour la source de l'image avec l'URL
+      imagePreview.classList.add("image-added"); // Ajouter la classe pour forcer l'affichage
+      imagePreviewContainer.style.display = "block"; // Afficher le conteneur de prévisualisation
+      photoIcon.style.display = "none"; // Cacher l'icône
+    });
+
+    reader.readAsDataURL(file); // Lire le fichier image sous forme d'URL
+  }
+}
+
+// Fonction pour réinitialiser l'aperçu de l'image
+function resetImagePreview() {
+  imagePreview.src = ""; // Vider la source de l'image
+  imagePreview.classList.remove("image-added"); // Supprimer la classe qui force l'affichage
+  imagePreviewContainer.style.display = "none"; // Cacher le conteneur de prévisualisation
+  photoIcon.style.display = "block"; // Remettre l'icône visible
+  imageInput.value = ""; // Vider le champ de fichier
+}
+
+// Désactive le bouton par défaut au chargement de la page
+btnAjouterProjet.classList.add("btn-disabled");
+btnAjouterProjet.disabled = true;
+
+// Écouteurs d'événements pour vérifier les changements dans les champs de formulaire
+titleInput.addEventListener("input", checkFormValidity);
+imageInput.addEventListener("change", () => {
+  checkFormValidity();
+  previewImage(); // Appeler la fonction pour afficher l'image
+});
+
+// Réinitialiser l'image lorsque la page ou la modale est fermée
+window.addEventListener("beforeunload", resetImagePreview);
+document
+  .querySelector(".js-modale-close")
+  .addEventListener("click", resetImagePreview);
+
+// * Ajoute l'événement clic pour soumettre le formulaire seulement si les champs sont valides
+btnAjouterProjet.addEventListener("click", addWork);
 
 // * Fonction pour ajouter un projet
 async function addWork(event) {
-  event.preventDefault(); // * Empêche l'envoi du formulaire par défaut
+  event.preventDefault(); // Empêche l'envoi du formulaire par défaut
 
-  // * Récupération des valeurs du formulaire
-  const title = document.querySelector(".js-title").value;
+  // Récupération des valeurs du formulaire
+  const title = titleInput.value;
   const categoryId = document.querySelector(".js-categoryId").value;
-  const image = document.querySelector(".js-image").files[0];
+  const image = imageInput.files[0];
 
-  // ! Vérification que tous les champs sont remplis
-  if (title === "" || categoryId === "" || image === undefined) {
+  // Vérification que tous les champs sont remplis
+  if (title === "" || categoryId === "" || !image) {
     alert("Merci de remplir tous les champs");
     return;
-  } else if (categoryId !== "1" && categoryId !== "2" && categoryId !== "3") {
-    alert("Merci de choisir une catégorie valide");
-    return;
-  } else {
-    try {
-      // * Création d'un objet `FormData` pour envoyer les données du projet
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("category", categoryId);
-      formData.append("image", image);
+  }
 
-      // * Envoi des données via une requête POST à l'API
-      const response = await fetch("http://localhost:5678/api/works", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+  try {
+    // Création d'un objet FormData pour envoyer les données du projet
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("category", categoryId);
+    formData.append("image", image);
 
-      // * Gestion des réponses du serveur
-      if (response.status === 201) {
-        alert("Projet ajouté avec succès :)");
-        modaleProjets(dataAdmin); // * Réaffiche les projets dans la modale admin
-        generationProjets(data, null); // * Rafraîchit la page d'accueil
-      } else if (response.status === 400) {
-        alert("Merci de remplir tous les champs");
-      } else if (response.status === 500) {
-        alert("Erreur serveur");
-      } else if (response.status === 401) {
-        alert("Vous n'êtes pas autorisé à ajouter un projet");
-        window.location.href = "login.html"; // * Redirige vers la page de connexion
-      }
-    } catch (error) {
-      console.log(error); // ! Gestion des erreurs
+    // Envoi des données via une requête POST à l'API
+    const response = await fetch("http://localhost:5678/api/works", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    // Gestion des réponses du serveur
+    if (response.status === 201) {
+      alert("Projet ajouté avec succès :)");
+      modaleProjets(); // Réaffiche les projets dans la modale admin
+      generationProjets(data, null); // Rafraîchit la page d'accueil
+      resetImagePreview(); // Réinitialise l'aperçu de l'image après l'ajout
+    } else if (response.status === 400) {
+      alert("Merci de remplir tous les champs");
+    } else if (response.status === 500) {
+      alert("Erreur serveur");
+    } else if (response.status === 401) {
+      alert("Vous n'êtes pas autorisé à ajouter un projet");
+      window.location.href = "login.html"; // Redirige vers la page de connexion
     }
+  } catch (error) {
+    console.log(error); // Gestion des erreurs
   }
 }
